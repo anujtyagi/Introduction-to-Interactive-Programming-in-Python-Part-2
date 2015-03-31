@@ -41,7 +41,7 @@ def draw(canvas):
     global exposed
     for num in range(len(cards)):
         if exposed[num]:
-            canvas.draw_text(str(cards[num]), (20+num*50, 60), 40, 'Red')
+            canvas.draw_text(str(cards[num]), (12+num*50, 65), 60, 'Red')
         else:
             canvas.draw_line((25+num*50,0),(25+num*50,100),44,'green')
     for num in range(len(cards)+1):
