@@ -15,7 +15,7 @@ card_back = simplegui.load_image("http://storage.googleapis.com/codeskulptor-ass
 # initialize some useful global variables
 in_play = False
 outcome = ""
-score = 0
+score = [0,0,0,0]
 
 # define globals for cards
 SUITS = ('C', 'S', 'H', 'D')
@@ -109,7 +109,7 @@ class Deck:
 
 #define event handlers for buttons
 def deal():
-    global outcome, in_play,player,dealer,newgame
+    global outcome, in_play,player,dealer,newgame,score
     newgame = Deck()
     newgame.shuffle()
     player = Hand()
@@ -118,6 +118,8 @@ def deal():
     outcome = ""
     if in_play == True:
         outcome = "Dealer wins!"
+        score[2] += 1
+        score[1] += 1
         in_play = False
     else:
         while counter <=1:	
@@ -132,29 +134,37 @@ def hit():
         player.add_card(newgame.deal_card())
         outcome = "Hit or stand"	
         if player.get_value() > 21:
-            outcome = "Player has busted, new deal?"	
+            outcome = "Player has busted, new deal?"
+            score[2] += 1
+            score[1] += 1
             in_play = False
        
 def stand():
-    global in_play, outcome,player,dealer,newgame
+    global in_play, outcome,player,dealer,newgame,score
     while dealer.get_value() <= 16 and in_play == True:
         dealer.add_card(newgame.deal_card())
         if dealer.get_value() > 21:
-            outcome = "Dealer has busted"	
+            outcome = "Dealer has busted"
+            score[0] += 1
+            score[3] += 1
             in_play = False
     while in_play == True:
         if dealer.get_value()< player.get_value():
             outcome = "Player wins, new deal?"
+            score[0] += 1
+            score[3] += 1
             in_play = False
         else:
             outcome = "Dealer wins, new deal?"
+            score[2] += 1
+            score[1] += 1
             in_play = False
 # draw handler    
 def draw(canvas):
     # test to make sure that card.draw works, replace with your code below
-    global player,in_play,dealer, outcome
+    global player,in_play,dealer, outcome,score
     canvas.draw_polygon([(0, 0), (600, 0), (600, 60),(0, 60)], 1, 'Blue', 'White')
-    canvas.draw_text('BlackJack', (225, 40), 40, 'black')
+    canvas.draw_text('BlackJack', (5, 40), 40, 'black')
     canvas.draw_text('Player', (20, 110), 50, 'Red')
     canvas.draw_text('Dealer', (450, 580), 50, 'Red')
     for i in range(40):
@@ -170,8 +180,18 @@ def draw(canvas):
             dealer.hand[i].draw(canvas, [430+(i*15), 440])
         canvas.draw_image(card_back, CARD_CENTER, CARD_SIZE, [480, 488], CARD_SIZE)
     canvas.draw_text(str(outcome), (80, 270), 40, 'black')
-    
-    
+    canvas.draw_text(str("Player"), (310, 37), 20, 'black')
+    canvas.draw_text(str("Dealer"), (310, 57), 20, 'black')
+    canvas.draw_text(str("win"), (380, 17), 20, 'black')
+    canvas.draw_text(str("lose"), (430, 17), 20, 'black')
+    canvas.draw_text(str("score"), (480, 17), 20, 'black')
+    canvas.draw_text(str(score[0]), (390, 37), 20, 'black')
+    canvas.draw_text(str(score[1]), (440, 37), 20, 'black')
+    canvas.draw_text(str(score[2]), (390, 57), 20, 'black')
+    canvas.draw_text(str(score[3]), (440, 57), 20, 'black')
+    canvas.draw_text(str(score[0]-score[1]), (490, 37), 20, 'black')
+    canvas.draw_text(str(score[2]-score[3]), (490, 57), 20, 'black')
+
 
 
 # initialization frame
