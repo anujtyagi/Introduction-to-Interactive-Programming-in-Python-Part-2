@@ -200,11 +200,11 @@ class Sprite:
             canvas.draw_image(self.image, self.image_center, self.image_size,
                           self.pos, self.image_size, self.angle)
         else:
-            current_rock_index = (time2 % 24) // 1
-            current_rock_center = [self.image_center[0] +  current_rock_index * self.image_center[0], self.image_center[1]]
+            current_rock_index = (self.age % 24) // 1
+            current_rock_center = [self.image_center[0] *current_rock_index, self.image_center[1]]
             canvas.draw_image(self.image, current_rock_center, self.image_size,
-                          self.pos, self.image_size, self.angle)
-            time2 +=2
+                   self.pos, self.image_size, self.angle)
+    
     def update(self):
         # update angle
         self.angle += self.angle_vel
