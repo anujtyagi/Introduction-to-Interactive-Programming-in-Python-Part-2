@@ -9,9 +9,11 @@ HEIGHT = 600
 score = 0
 lives = 3
 time = 0
+time2 = 0
 started = False
 rock_group = set()
 missile_group = set()
+explosion_group = set()
 class ImageInfo:
     def __init__(self, center, size, radius = 0, lifespan = None, animated = False):
         self.center = center
@@ -93,9 +95,14 @@ def process_sprite_group(canvas,group = set()):
             group.remove(sprite)
         
 def group_colide(group,sprite):
+    global time2
     for i in set(group):
         if i.collide(sprite):
-            group.remove(i)
+            group.remove(i)         
+            explosion_group.add(Sprite(i.pos, [0,0], 0, 0, explosion_image, explosion_info))
+            time2 = 0
+            explosion_sound.play()
+            explosion_sound.rewind()
             return True
 
 def group_group_colide(rocks,missiles):
@@ -188,9 +195,16 @@ class Sprite:
             sound.play()
    
     def draw(self, canvas):
-        canvas.draw_image(self.image, self.image_center, self.image_size,
+        global time2
+        if not self.animated:
+            canvas.draw_image(self.image, self.image_center, self.image_size,
                           self.pos, self.image_size, self.angle)
-
+        else:
+            current_rock_index = (time2 % 24) // 1
+            current_rock_center = [self.image_center[0] +  current_rock_index * self.image_center[0], self.image_center[1]]
+            canvas.draw_image(self.image, current_rock_center, self.image_size,
+                          self.pos, self.image_size, self.angle)
+            time2 +=2
     def update(self):
         # update angle
         self.angle += self.angle_vel
@@ -286,6 +300,7 @@ def draw(canvas):
         my_ship.update()
         process_sprite_group(canvas,rock_group)
         process_sprite_group(canvas,missile_group)
+        process_sprite_group(canvas,explosion_group)
         group_group_colide(rock_group,missile_group)
         
 # timer handler that spawns a rock    
